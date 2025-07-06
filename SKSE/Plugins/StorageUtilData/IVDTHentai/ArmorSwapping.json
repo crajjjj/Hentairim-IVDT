@@ -1,8 +1,9 @@
 {
    "string":{
-      "armorslots":"32,44,38,49,46,52,56,42,45"
+      "armorslots":"32,44,38,49,46,52,53,56,42,45"
    },
    "form":{
+      "love letter maiden normal (short)":"0xd78|[baku]doaxvv love letter maiden.esp",
       "cosplay bikini - frill":"0xe74|[caenarvon] cosplay pack.esp",
       "cosplay bikini - ghosted":"0xa32|[caenarvon] cosplay pack.esp",
       "cosplay bikini - golden":"0xa39|[caenarvon] cosplay pack.esp",
@@ -347,7 +348,39 @@
       "yorha knight armor":"0x849|[caenarvon] spindrift knight.esp",
       "yorha knight pants":"0x84a|[caenarvon] spindrift knight.esp",
       "jours d'amour cuirass normal":"0x80f|[baku]doaxvv jours d'amour.esp",
-      "Jun Bishoujo Bodysuit":"0x80b|[baku]tk jun bishoujo.esp",
+      "jun bishoujo bodysuit":"0x80b|[baku]tk jun bishoujo.esp",
+      "arachne mirage body suit normal":"0x812|[baku]doaxvv arachne mirage.esp",
+      "arachne mirage body suit normal (purple)":"0x815|[baku]doaxvv arachne mirage.esp",
+      "[hirosin] sexy shanghai cheongsam bikini b solid":"0xe1a|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bikini bl solid":"0xe1e|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bikini p stripe":"0xe1c|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bikini r leopard":"0xe1d|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bikini w cow":"0xe1b|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bottom b":"0x0ed|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bottom bl":"0xdf1|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bottom p":"0xdef|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bottom r":"0xdf0|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam bottom w":"0xdee|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam micro bikini b solid":"0xe24|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam micro bikini bl solid":"0xe28|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam micro bikini p stripe":"0xe27|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam micro bikini r leopard":"0xdee|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "[hirosin] sexy shanghai cheongsam micro bikini w cow":"0xe25|[hirosin] sexy shanghai cheongsam(esl).esp",
+      "bitter jealousy cuirass":"0x80f|[baku]doaxvv bitter jealousy.esp",
+      "[coco] ahri bra i":"0x86a|[coco] ahri uniforms.esp",
+      "[coco] ahri bra ii":"0x84f|[coco] ahri uniforms.esp",
+      "[coco] ahri bra iii":"0x83b|[coco] ahri uniforms.esp",
+      "[coco] ahri bra iv":"0x827|[coco] ahri uniforms.esp",
+      "[coco] ahri bra v":"0x815|[coco] ahri uniforms.esp",
+      "[coco] ahri bra vi":"0x80b|[coco] ahri uniforms.esp",
+      "[coco] ahri bra vii":"0x801|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt i":"0x87a|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt ii":"0x853|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt iii":"0x83f|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt iv":"0x82b|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt v":"0x819|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt vi":"0x80d|[coco] ahri uniforms.esp",
+      "[coco] ahri skirt vii":"0x803|[coco] ahri uniforms.esp",
       "dragon rises armor":"0x806|[nini] dragon rises.esp"
    }
 }

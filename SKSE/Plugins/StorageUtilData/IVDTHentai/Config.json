@@ -1,11 +1,11 @@
 {
    "int":{
       "enableautoadvancestage":1,
-      "donotadvanceifpartnerclosetoorgasm":0,
-      "donotadvanceifpcclosetoorgasm":1,
+      "donotadvanceifpartnerclosetoorgasm":1,
+      "donotadvanceifpcclosetoorgasm":0,
       "donotadvanceifnpcclosetoorgasm":1,
-      "enabletagscaling":0,
-      "chancetoorgasmsquirt":20,
+      "enabletagscaling":1,
+      "chancetoorgasmsquirt":0,
       "enablebrokenstatus":1,
       "brokenstatusvictimonly":1,
       "enablethickcumleak":1,
@@ -28,11 +28,13 @@
       "enablearmorswapping":1,
       "aggressivechancetomovebackastage":15,
       "enjoymentforaggressivetomovebackastage":75,
-      "hugeppschlongsize":6,
+      "hugeppschlongsize":10,
       "enableghostactors":0,
       "moanonly":0,
       "hypebeforeorgasm":1,
       "useblowjobsoundforkissing":1,
+      "speeduppreventstageadvance":1,
+      "speedgeartoincreaseintensity":2,
       "printdebug":0
    }
 }
