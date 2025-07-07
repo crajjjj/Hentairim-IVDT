@@ -242,26 +242,25 @@ Function InitializeConfigValues()
 ;Store Actor Base Scaling for reset later after animation ends,
 ActorsInPlay = sexLabThreadController.Positions
 
-ActorOne = ActorsInPlay[1]
-ActorTwo = ActorsInPlay[2]
-ActorThree = ActorsInPlay[3]
-ActorFour = ActorsInPlay[4]
-ActorFive = ActorsInPlay[5]
-
-if ActorOne != none
-Actor1BaseScale = ActorOne.getscale()
+if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[1] != none
+	ActorOne = ActorsInPlay[1]
+	Actor1BaseScale = ActorsInPlay[1].getscale()
 endif
-if ActorTwo != none
-Actor2BaseScale = ActorTwo.getscale()
+if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[2] != none
+	ActorTwo = ActorsInPlay[2]
+	Actor2BaseScale = ActorTwo.getscale()
 endif
-if ActorThree != none
-Actor3BaseScale = ActorThree.getscale()
+if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[3] != none
+	ActorThree = ActorsInPlay[3]
+	Actor3BaseScale = ActorThree.getscale()
 endif
-if ActorFour != none
-Actor4BaseScale = ActorFour.getscale()
+if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[4] != none
+	ActorFour = ActorsInPlay[4]
+	Actor4BaseScale = ActorFour.getscale()
 endif
-if ActorFive != none
-Actor5BaseScale = ActorFive.getscale()
+if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[5] != none
+	Actor5BaseScale = ActorFive.getscale()
+	ActorFive = ActorsInPlay[5]
 endif
 
 NotificationifFileisBad()
@@ -345,12 +344,18 @@ Function PerformInitialization()
 	PullMCMConfigOptions()
 
 	;always run male at full volume
-	LowPrioritySoundsMale.setvolume(1.0)
-	HighPrioritySoundsMale.setvolume(1.0)
-	LowPrioritySounds.setvolume(volume)
-	HighPrioritySounds.setvolume(volume)
-	
-	
+	if LowPrioritySoundsMale
+		LowPrioritySoundsMale.setvolume(1.0)
+	endif
+	if HighPrioritySoundsMale
+		HighPrioritySoundsMale.setvolume(1.0)
+	endif
+	if LowPrioritySounds
+		LowPrioritySounds.setvolume(volume)
+	endif
+	if HighPrioritySounds
+		HighPrioritySoundsMale.setvolume(volume)
+	endif
 	
 	;Then, set up some other one-time config on scene start
 	hoursSinceLastSex = SexLab.HoursSinceLastSex(mainFemaleActor)
@@ -390,17 +395,22 @@ Function PerformInitialization()
   endif
 	
 	;Set Schlong Faction
-	schlongfaction = Game.GetFormFromFile(0xAFF8 , "Schlongs of Skyrim.esp") as Faction
-	
-	;Hentairim Enjoyment 
-	HentairimResistance = Game.GetFormFromFile(0x854, "Hentairim Enjoyment Expressions Traits.esp") as Faction	
-	HentairimBroken = Game.GetFormFromFile(0x853, "Hentairim Enjoyment Expressions Traits.esp") as Faction
+	if isDependencyReady("Schlongs of Skyrim.esp")
+		schlongfaction = Game.GetFormFromFile(0xAFF8 , "Schlongs of Skyrim.esp") as Faction
+	endif
 
+	;Hentairim Enjoyment 
+	if isDependencyReady("Hentairim Enjoyment Expressions Traits.esp")
+		HentairimResistance = Game.GetFormFromFile(0x854, "Hentairim Enjoyment Expressions Traits.esp") as Faction	
+		HentairimBroken = Game.GetFormFromFile(0x853, "Hentairim Enjoyment Expressions Traits.esp") as Faction
+	endif
 	;Lactate
-	MilkR = Game.GetFormFromFile(0x812, "IVDTHentaiLactate.esp") as Armor
-	MilkL = Game.GetFormFromFile(0x813, "IVDTHentaiLactate.esp") as Armor
-	NippleLeakCBBE  = game.GetFormFromFile(0x814, "IVDTHentaiLactate.esp") as EffectShader
-	
+	if isDependencyReady("IVDTHentaiLactate.esp")
+		MilkR = Game.GetFormFromFile(0x812, "IVDTHentaiLactate.esp") as Armor
+		MilkL = Game.GetFormFromFile(0x813, "IVDTHentaiLactate.esp") as Armor
+		NippleLeakCBBE  = game.GetFormFromFile(0x814, "IVDTHentaiLactate.esp") as EffectShader
+	endif
+
 	;Ghost Actor enabled
 	SetGhostActor()
 	
@@ -704,7 +714,7 @@ if actorWithSceneTrackerSpell == mainFemaleActor
 
 ;=========================run Dirty Talk & sex Effects=======================	
 	;run lactating
-
+If (MilkR)
 	if (mainFemaleActor.IsEquipped(MilkL) || mainFemaleActor.IsEquipped(MilkR)) && !ASLcurrentlyIntense
 		if Utility.RandomInt(1, 100) <= ChancetoStopLactate && GetMainNPCTrait() != "+The Milker" ;cant start lactating until scene ends with the milker
 			printdebug(" Stop Lactating")
@@ -715,6 +725,8 @@ if actorWithSceneTrackerSpell == mainFemaleActor
 			Lactate()
 		endif	
 	endif
+EndIf
+	
 	
 	if HasOninusLactis() && (IsgettingPenetrated() || IsGivingAnalPenetration() || IsGivingVaginalPenetration())
 		if Isintense() && utility.randomint(1,100) <= oninuslactischancetolactateduringintense
@@ -2429,22 +2441,23 @@ Armor LewdArmor
 	while slotindex < slotlength
 		BaseArmor = mainFemaleActor.GetWornForm(Armor.GetMaskForSlot(ArmorSlotsToSwitch[slotindex] as int)) as armor
 		;miscutil.PrintConsole ("BaseArmor : " + BaseArmor.getname())
-
-		LewdArmor = jsonutil.GetFormValue(ArmorSwappingFile, BaseArmor.getname(), none)	as armor
+		if BaseArmor
+			LewdArmor = jsonutil.GetFormValue(ArmorSwappingFile, BaseArmor.getname(), none)	as armor
+		endif
 	;	miscutil.PrintConsole ("LewdArmor : " + LewdArmor.getname())
-	if LewdArmor != none
+		if LewdArmor != none
 	;	miscutil.PrintConsole (slotindex + " Trying to add  : "+ LewdArmor.getname())
-		mainFemaleActor.addItem(LewdArmor , abSilent=true)
+			mainFemaleActor.addItem(LewdArmor , abSilent=true)
 		
 		;miscutil.PrintConsole (slotindex + " Trying to unequip  : "+ BaseArmor.getname())
-		mainFemaleActor.unEquipItem(BaseArmor , abSilent=true)
+			mainFemaleActor.unEquipItem(BaseArmor , abSilent=true)
 		
 	;	miscutil.PrintConsole (slotindex + " Trying to equip  : "+ LewdArmor.getname())
-		mainFemaleActor.EquipItem(LewdArmor , abSilent=true)
+			mainFemaleActor.EquipItem(LewdArmor , abSilent=true)
 		
-		BaseArmorArr = papyrusutil.pushform(BaseArmorArr , BaseArmor)
-		LewdArmorArr = papyrusutil.pushform(LewdArmorArr , LewdArmor)
-	endif
+			BaseArmorArr = papyrusutil.pushform(BaseArmorArr , BaseArmor)
+			LewdArmorArr = papyrusutil.pushform(LewdArmorArr , LewdArmor)
+		endif
 	
 	slotindex += 1
 	endwhile
@@ -2587,14 +2600,14 @@ if enableghostactors == 1
 
 	int counter = 0
 
-	while counter <=5 
-		if  ActorsInPlay[counter] != mainFemaleActor
+	while counter <=5
+		If (ActorsInPlay.length > counter)
+			if ActorsInPlay[counter] && ActorsInPlay[counter] != mainFemaleActor
 				ActorsInPlay[counter].Addspell(Ghost)
-		endif
-		counter = counter+ 1
+			endif
+		EndIf
+		counter = counter + 1
 	endwhile
-
-	
 endif
 endfunction
 
@@ -2609,11 +2622,14 @@ Spell Ghost = Game.GetFormFromFile(0xd2056, "Skyrim.esm") as Spell
 	int counter = 0
 
 	while counter <=5
-		if  ActorsInPlay[counter] != mainFemaleActor
-		ActorsInPlay[counter].Removespell(Ghost)
-		ActorsInPlay[counter].setalpha(1.0,true)
+		If ( ActorsInPlay.length > counter)
+			if  ActorsInPlay[counter] && ActorsInPlay[counter] != mainFemaleActor
+			ActorsInPlay[counter].Removespell(Ghost)
+			ActorsInPlay[counter].setalpha(1.0,true)
+			endif
 		endif
-		counter = counter+ 1
+		
+		counter = counter + 1
 	endwhile
 	
 endif
@@ -3161,8 +3177,10 @@ int levelduringintense
 
 	
 Function InitializeOninusLactis()
-	OninusLactisQuest = Game.GetFormFromFile(0xD61, "OninusLactis.esp") as Quest
-	
+	if isDependencyReady("OninusLactis.esp")
+		OninusLactisQuest = Game.GetFormFromFile(0xD61, "OninusLactis.esp") as Quest
+	endif
+
  enableoninuslactislactate = JsonUtil.GetIntValue(OninusLactisFile,"enableoninuslactislactate",0)
  oninuslactischancetolactateduringorgasm = JsonUtil.GetIntValue(OninusLactisFile,"chancetolactateduringorgasm",0)
  oninuslactischancetolactateduringnonintense = JsonUtil.GetIntValue(OninusLactisFile,"chancetolactateduringnonintense",0)
@@ -3171,7 +3189,7 @@ Function InitializeOninusLactis()
  maxtimetolactate  = JsonUtil.GetIntValue(OninusLactisFile,"maxtimetolactate",0)
  levelduringnonintense = JsonUtil.GetIntValue(OninusLactisFile,"levelduringnonintense",0)
  levelduringintense  = JsonUtil.GetIntValue(OninusLactisFile,"levelduringintense",0)
-if OninusLactisQuest == none
+if !OninusLactisQuest
 	printdebug("Oninus Lactis not enabled or installed")
 	enableoninuslactislactate = 0
 else 

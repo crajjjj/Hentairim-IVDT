@@ -71,15 +71,15 @@ Event OnUpdate()
 
 				if SoundContainer != none
 
-					while controller.ActorAlias(player).GetState() == "Animating"
+					if controller.ActorAlias(player).GetState() == "Animating"
 						;miscutil.PrintConsole ("ASL SFX still animating" ) 
 						ASLRefreshSoundPosition()
 						printdebug("ASLSoundPosition " + ASLSoundPosition)
 						mySFX = (SoundContainer.GetAt(0) As formlist).GetAt(ASLSoundPosition) As Sound
 
 						mySFX.Playandwait(player)
-
-					endwhile
+						Utility.Wait(1)
+					endif
 					RegisterForSingleUpdate(1)
 					return
 				else
@@ -132,7 +132,7 @@ Labelsconcat = "1" +Stimulationlabel + "1" + OralLabel + "1" + PenetrationLabel
 
 ASLSFX = HentaiRimTags.GetSFX(anim, stage)
 ;Play from ASL SFX Tags If Any
-if ASLSFX != "None" && ASLSFX != ""
+if ASLSFX != ""
 	
 	if ASLSFX == "SS"
 		ASLSoundPosition = 3 ; SOFT SLUSHING

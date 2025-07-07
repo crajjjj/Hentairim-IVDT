@@ -251,7 +251,7 @@ String Function EndingLabel(sslBaseAnimation anim , int stage , Int ActorPos) Gl
 endfunction
 
 string Function GetSFX(sslBaseAnimation anim , int stage) Global
-if anim.HasTag(stage+"SC")
+	if anim.HasTag(stage+"SC")
 		return "SC"
 	elseif anim.HasTag(stage+"MC")
 		return "MC"
