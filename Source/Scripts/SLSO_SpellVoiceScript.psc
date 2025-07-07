@@ -95,6 +95,8 @@ Event OnPlayerLoadGame()
 EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
+	;just in case
+	Remove()
 EndEvent
 
 function Remove()
@@ -131,15 +133,7 @@ Labelsconcat = "1" +Stimulationlabel + "1" + OralLabel + "1" + PenetrationLabel
 ASLSFX = HentaiRimTags.GetSFX(anim, stage)
 ;Play from ASL SFX Tags If Any
 if ASLSFX != "None" && ASLSFX != ""
-
-	while ASLSFX == "NA" 	; wait until NA SFX stage is finish
-		Utility.Wait(3.0)
-		stage =  controller.stage
-		anim = controller.animation
-		ASLSFX = HentairimTags.GetSFX(anim, stage)
-
-	endwhile
-
+	
 	if ASLSFX == "SS"
 		ASLSoundPosition = 3 ; SOFT SLUSHING
 	elseif ASLSFX == "MS"

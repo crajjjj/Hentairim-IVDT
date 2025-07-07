@@ -228,6 +228,11 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 
 EndEvent
 
+Event OnEffectFinish( Actor akTarget, Actor akCaster )
+	;just in case
+	
+EndEvent
+
 int EnablePrintDebug
 int useblowjobsoundforkissing
 int speeduppreventstageadvance
@@ -652,9 +657,12 @@ EndEvent
 
 Event OnUpdate()
 printdebug(" Updating")
-while Initialized == false ; wait until initialization complete
-	Utility.Wait(1)
-endwhile
+
+if !Initialized
+	int lag = 2
+	RegisterForSingleUpdate(nextUpdateInterval + lag)
+	return
+endif
 
 if SexLab.FindPlayerController() == -1 
 	StorageUtil.SetIntValue(None, "ASLDoNotAllowFemaleOrgasmYet", 0)
