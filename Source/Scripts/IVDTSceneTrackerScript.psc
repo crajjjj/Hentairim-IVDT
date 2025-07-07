@@ -2214,12 +2214,14 @@ endif
 endfunction
 
 bool function ASLIsBroken()
-	
 	return GetBrokenPoints() > 0 && EnableBrokenStatus == 1
 endfunction
 
 int function GetBrokenPoints()
-	return mainfemaleactor.GetFactionRank(HentairimBroken)
+	if HentairimBroken
+		return mainfemaleactor.GetFactionRank(HentairimBroken)
+	endif
+	return 0
 endFunction
 
 
