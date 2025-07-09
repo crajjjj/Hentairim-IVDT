@@ -2389,9 +2389,9 @@ endfunction
 
 Bool Function HasDeviousGag(Actor char)
 	if has_MagicEffect(char, 0x2b077, "Devious Devices - Integration.esm") 	&& Char == MainfemaleActor			;devious gag
-	
 			return true
 		endif
+		return false
 endfunction
 
 
