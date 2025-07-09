@@ -3209,11 +3209,28 @@ Bool function HasOninusLactis()
 		return false
 	endif
 endfunction
+Bool function HasMME()
 
+	if Game.GetModbyName("MilkModNEW.esp") != 255
+		return true
+	else	
+		
+		return false
+	endif
+endfunction
 function OninusLactislactate()
-if !HasOninusLactis()
-	return
-endif
+	if !HasOninusLactis()
+		return
+	endif
+    bool isMME = false
+	int MMEFullness
+	if HasMME()
+		isMME = true
+		float milkCur = MME_Storage.getMilkCurrent(mainFemaleActor)
+		float milkMax = MME_Storage.getMilkMaximum(mainFemaleActor)
+		MMEFullness = Math.Ceiling(milkCur/milkMax * 100)
+	endif
+	
 	int lactatetime = utility.randomint(mintimetolactate , maxtimetolactate)
 	int lactatelevel
 	
@@ -3226,9 +3243,13 @@ endif
 	;if HasOninusLactisNG()
     OninusLactis squirtScript = OninusLactisQuest as OninusLactis
 	
-	
 	if squirtScript != none
-		squirtScript.PlayNippleSquirt(MainfemaleActor, lactatetime ,lactatelevel)
+		if isMME && MMEFullness > 20
+			squirtScript.PlayNippleSquirt(MainfemaleActor, lactatetime ,lactatelevel)
+			MME_Storage.changeMilkCurrent(mainFemaleActor, 0 - lactatelevel*lactatetime, false)
+		ElseIf !isMME
+			squirtScript.PlayNippleSquirt(MainfemaleActor, lactatetime ,lactatelevel)
+		endif
 	else
 		printdebug("Something is Wrong! OninusLactis Script is none!")
 	endif
