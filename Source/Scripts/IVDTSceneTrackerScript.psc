@@ -354,7 +354,7 @@ Function PerformInitialization()
 		LowPrioritySounds.setvolume(volume)
 	endif
 	if HighPrioritySounds
-		HighPrioritySoundsMale.setvolume(volume)
+		HighPrioritySounds.setvolume(volume)
 	endif
 	
 	;Then, set up some other one-time config on scene start
