@@ -2468,31 +2468,41 @@ endfunction
 
 
 Function RestoreArmor()
+	if EnableArmorSwapping != 1
+		return
+	endif
 
-if EnableArmorSwapping != 1
-return
-endif
+	int slotLength = BaseArmorArr.Length
+	if LewdArmorArr.Length < slotLength
+		slotLength = LewdArmorArr.Length
+	endif
 
-int slotlength = BaseArmorArr.length
-int slotindex = 0
-Armor BaseArmor
-Armor LewdArmor
+	int slotIndex = 0
+	Armor baseArmor
+	Armor lewdArmor
 
-;miscutil.PrintConsole ("restoring armor....")
-while slotindex < slotlength 
-		BaseArmor = BaseArmorArr[slotindex] as armor
-		LewdArmor = LewdArmorArr[slotindex] as armor
-		
-		;miscutil.PrintConsole (slotindex + " Trying to equip  : "+ BaseArmor.getname())
-		mainFemaleActor.EquipItem(BaseArmor , abSilent=true)
-		
-		;miscutil.PrintConsole (slotindex + " Trying to remove  : "+ LewdArmor.getname())
-		mainFemaleActor.RemoveItem(LewdArmor , abSilent=true)
-	
-	slotindex += 1
+	while slotIndex < slotLength
+		baseArmor = BaseArmorArr[slotIndex] as Armor
+		lewdArmor = LewdArmorArr[slotIndex] as Armor
+
+		if baseArmor
+			mainFemaleActor.EquipItem(baseArmor, abSilent=true)
+			; MiscUtil.PrintConsole("Equipped BaseArmor: " + baseArmor.GetName())
+		endif
+
+		if lewdArmor
+			mainFemaleActor.RemoveItem(lewdArmor, abSilent=true)
+			; MiscUtil.PrintConsole("Removed LewdArmor: " + lewdArmor.GetName())
+		endif
+
+		slotIndex += 1
 	endwhile
 
+	; Optional: clear arrays to prevent re-use
+	BaseArmorArr = new Form[1]
+	LewdArmorArr = new Form[1]
 EndFunction
+
 
 
 Int Function CurrentPenetrationLvl()
