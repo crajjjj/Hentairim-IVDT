@@ -2449,7 +2449,7 @@ Armor LewdArmor
 			LewdArmor = jsonutil.GetFormValue(ArmorSwappingFile, BaseArmor.getname(), none)	as armor
 		endif
 	;	miscutil.PrintConsole ("LewdArmor : " + LewdArmor.getname())
-		if LewdArmor != none
+		if LewdArmor != none && BaseArmor!=none
 	;	miscutil.PrintConsole (slotindex + " Trying to add  : "+ LewdArmor.getname())
 			mainFemaleActor.addItem(LewdArmor , abSilent=true)
 		
