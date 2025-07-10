@@ -171,6 +171,7 @@ String[] ArmorSlotsToSwitch
 Int[] ValidSlots
 form[] BaseArmorArr 
 form[] LewdArmorArr 
+Bool ArmorSwapped = false
 
 Keyword TNG_Gentlewoman
 Keyword TNG_L
@@ -2430,9 +2431,10 @@ endfunction
 
 Function BodySwitchtoLewdArmor()
 ; this is meant for slot 32 body armor switching only at the beginning of the stage.
-if EnableArmorSwapping != 1
-return
+if EnableArmorSwapping != 1 || ArmorSwapped
+        return
 endif
+ArmorSwapped = true
 
 int slotlength = ArmorSlotsToSwitch.length
 int slotindex = 0
@@ -2463,20 +2465,25 @@ Armor LewdArmor
 	
 	slotindex += 1
 	endwhile
-
+	if BaseArmorArr && BaseArmorArr.Length > 0
+		printdebug("HentaiRim IVDT RestorBodySwitchtoLewdArmoreArmor-swapped: " + BaseArmorArr.Length)
+	else
+		printdebug("HentaiRim IVDT RestorBodySwitchtoLewdArmoreArmor-swapped 0")
+	endif
+	
 endfunction
 
 
 Function RestoreArmor()
-	if EnableArmorSwapping != 1
-		return
-	endif
-
+    if EnableArmorSwapping != 1 || !ArmorSwapped
+      return
+    endif
+	
 	int slotLength = BaseArmorArr.Length
 	if LewdArmorArr.Length < slotLength
 		slotLength = LewdArmorArr.Length
 	endif
-
+	printdebug("HentaiRim IVDT RestoreArmor-amount: " + slotLength)	
 	int slotIndex = 0
 	Armor baseArmor
 	Armor lewdArmor
@@ -2501,6 +2508,7 @@ Function RestoreArmor()
 	; Optional: clear arrays to prevent re-use
 	BaseArmorArr = new Form[1]
 	LewdArmorArr = new Form[1]
+	ArmorSwapped = false
 EndFunction
 
 
