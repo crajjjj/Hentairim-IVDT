@@ -231,7 +231,7 @@ EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
-	
+	ASLEndScene()
 EndEvent
 
 int EnablePrintDebug
@@ -840,7 +840,7 @@ Function RemoveTracker()
 	ASLRemoveThickCumleak()
 	ASLRemoveCumPool()
 	;Perform needed clean up first
-	UnregisterForUpdate()
+	;UnregisterForUpdate()
 	LowPrioritySounds.UnMute()
 	
 	;Do this very last, but make sure to do it (it's what actually removes the tracker)
@@ -2795,7 +2795,9 @@ endfunction
 Function PrintDebug(string Contents = "")
 if EnablePrintDebug == 1
 ;bool function WriteToFile(string fileName, string text, bool append = true, bool timestamp = false) global native
-	miscutil.printconsole("HentaiRim IVDT : " + Contents)
+	String debugMessage = "HentaiRim IVDT : " + Contents
+	Debug.Trace(debugMessage, 0)
+	miscutil.printconsole(debugMessage)
 endif
 endfunction 
 
