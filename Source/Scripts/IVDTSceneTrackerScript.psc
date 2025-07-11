@@ -1,6 +1,6 @@
 	Scriptname IVDTSceneTrackerScript extends ActiveMagicEffect  
 {Each instance of this script tracks a single SexLab scene (or more colloquially called fuck) and controls/plays the dialogue for it.}
-
+import Debug
 ;References
 SexLabFramework Property SexLab Auto 
 IVDTControllerScript Property MasterScript Auto
@@ -226,11 +226,18 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 	actorWithSceneTrackerSpell = akTarget
 	mainFemaleActor = playerCharacter ;Temporary default until FindActorsAndVoices is called
 	PerformInitialization()
-
+	printdebug("OnEffectStart: " + akTarget.GetLeveledActorBase().GetName())
+	
+	
+	;unequipmask for blowjob
 EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
+	printdebug("OnEffectFinish: " + akTarget.GetLeveledActorBase().GetName())
+	if akTarget == playerCharacter
+		RestoreArmor()
+	endif
 	ASLEndScene()
 EndEvent
 
@@ -517,6 +524,7 @@ EndEvent
 
 Function ASLEndScene()	;manually end scene
 	;miscutil.PrintConsole ("Triggered ASLEndScene ")
+	printdebug("ASLEndScene: " + mainFemaleActor.GetLeveledActorBase().getName())
 	RestoreArmor()
 	ResetActorScale()
 	ResetGhostActor()
@@ -670,11 +678,10 @@ Event OnUpdate()
 printdebug(" Updating")
 
 if !Initialized
+	printdebug(" Not Initialized - repeating")
 	int lag = 2
 	RegisterForSingleUpdate(nextUpdateInterval + lag)
-	return
-endif
-
+else
 if SexLab.FindPlayerController() == -1 
 	StorageUtil.SetIntValue(None, "ASLDoNotAllowFemaleOrgasmYet", 0)
 
@@ -828,6 +835,9 @@ endif
 	RegisterForSingleUpdate(nextUpdateInterval)
 	
 ;miscutil.PrintConsole ("-----------------End CYCLE-------------------- " )
+endif
+
+
 EndEvent
 
 Function RemoveTracker()
@@ -1121,8 +1131,7 @@ Function ASLUPDATE()
 bool StageTransitioning = false
 
 if SexLab.FindPlayerController() == -1
-
-ASLEndScene()
+	ASLEndScene()
 else
 	
 	;initialize certain variables if different animation or stage
@@ -1138,7 +1147,7 @@ else
 		endif
 		printdebug("ishugepp Scenario : " + ishugepp()) 
 		UpdateLabels(CurrentAnimation , currentstage , PCPosition) ;update only for PC
-		PrimaryStageLabel = GetPrimaryLabel()		
+		PrimaryStageLabel = GetPrimaryLabel()
 
 		;multiply stage timers for certain NPC traits
 		float TimerMultiplier = 1
@@ -1999,10 +2008,10 @@ endif
 	
 	Utility.Wait(Utility.RandomFloat(0.5, 1.0)) ; wait up to 1 second for transition to complete before playing voice
 	
-
+	if SexLab.FindPlayerController() != -1
 		BodySwitchtoLewdArmor()
 		;unequipmask for blowjob
-
+	endif
 		
 	
 	if mainFemaleEnjoyment >= FemaleOrgasmHypeEnjoyment || moanonly == 1
@@ -2466,9 +2475,9 @@ Armor LewdArmor
 	slotindex += 1
 	endwhile
 	if BaseArmorArr && BaseArmorArr.Length > 0
-		printdebug("HentaiRim IVDT RestorBodySwitchtoLewdArmoreArmor-swapped: " + BaseArmorArr.Length)
+		printdebug("SwitchtoLewdArmoreArmor-swapped: " + BaseArmorArr.Length + ".Character:" +mainFemaleActor.GetLeveledActorBase().GetName())
 	else
-		printdebug("HentaiRim IVDT RestorBodySwitchtoLewdArmoreArmor-swapped 0")
+		printdebug("SwitchtoLewdArmoreArmor-swapped 0" + ".Character:" +mainFemaleActor.GetLeveledActorBase().GetName())
 	endif
 	
 endfunction
@@ -2480,10 +2489,15 @@ Function RestoreArmor()
     endif
 	
 	int slotLength = BaseArmorArr.Length
-	if LewdArmorArr.Length < slotLength
-		slotLength = LewdArmorArr.Length
+	
+	if BaseArmorArr
+		printdebug("RestoreArmor-BaseArmorArr: " + BaseArmorArr.Length + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())
 	endif
-	printdebug("HentaiRim IVDT RestoreArmor-amount: " + slotLength)	
+	if LewdArmorArr
+		printdebug("RestoreArmor-LewdArmorArr: " + LewdArmorArr.Length + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())
+	endif
+
+	;printdebug("RestoreArmor-amount: " + slotLength + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())	
 	int slotIndex = 0
 	Armor baseArmor
 	Armor lewdArmor
@@ -2491,7 +2505,7 @@ Function RestoreArmor()
 	while slotIndex < slotLength
 		baseArmor = BaseArmorArr[slotIndex] as Armor
 		lewdArmor = LewdArmorArr[slotIndex] as Armor
-
+		
 		if baseArmor
 			mainFemaleActor.EquipItem(baseArmor, abSilent=true)
 			; MiscUtil.PrintConsole("Equipped BaseArmor: " + baseArmor.GetName())
@@ -2502,12 +2516,11 @@ Function RestoreArmor()
 			; MiscUtil.PrintConsole("Removed LewdArmor: " + lewdArmor.GetName())
 		endif
 
+		
+
+	
 		slotIndex += 1
 	endwhile
-
-	; Optional: clear arrays to prevent re-use
-	BaseArmorArr = new Form[1]
-	LewdArmorArr = new Form[1]
 	ArmorSwapped = false
 EndFunction
 
@@ -2671,11 +2684,11 @@ Bool Function MainMaleCanControl()
 endfunction
 
 Bool Function PCHasLactatingSpell()
-
-Spell Lactating = Game.GetFormFromFile(0x851, "IVDTHentaiNPCTraitsAndEnjoyment.esp") as Spell
-
-return mainFemaleActor.hasspell(Lactating)
-
+if isDependencyReady("IVDTHentaiNPCTraitsAndEnjoyment.esp")
+	Spell Lactating = Game.GetFormFromFile(0x851, "IVDTHentaiNPCTraitsAndEnjoyment.esp") as Spell
+	return mainFemaleActor.hasspell(Lactating)
+endif
+return false
 endfunction
 
 Bool Function Isintense()
@@ -2792,14 +2805,21 @@ Bool Function IsStimulatingOthers()
 
 endfunction
 
-Function PrintDebug(string Contents = "")
-if EnablePrintDebug == 1
-;bool function WriteToFile(string fileName, string text, bool append = true, bool timestamp = false) global native
-	String debugMessage = "HentaiRim IVDT : " + Contents
-	Debug.Trace(debugMessage, 0)
-	miscutil.printconsole(debugMessage)
-endif
-endfunction 
+Function PrintDebug(String asMessage, Int aiPriority = 0)
+	if EnablePrintDebug == 1
+		hentairim_log.WriteLog(asMessage, aiPriority, "IVDTSceneTrackerScript")
+		miscutil.printconsole(asMessage)
+	endif
+EndFunction
+
+; Function PrintDebug(string Contents = "")
+; if EnablePrintDebug == 1
+; ;bool function WriteToFile(string fileName, string text, bool append = true, bool timestamp = false) global native
+; 	String debugMessage = "HentaiRim IVDT : " + Contents
+; 	Debug.Trace(debugMessage, 0)
+; 	miscutil.printconsole(debugMessage)
+; endif
+; endfunction 
 
 String Stimulationlabel
 String PenisActionLabel
