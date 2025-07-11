@@ -231,7 +231,7 @@ EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
-	ASLEndScene()
+	
 EndEvent
 
 int EnablePrintDebug
@@ -243,25 +243,25 @@ Function InitializeConfigValues()
 ;Store Actor Base Scaling for reset later after animation ends,
 ActorsInPlay = sexLabThreadController.Positions
 
-if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[0] != none
-	ActorOne = ActorsInPlay[0]
-	Actor1BaseScale = ActorsInPlay[0].getscale()
+if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[1] != none
+	ActorOne = ActorsInPlay[1]
+	Actor1BaseScale = ActorsInPlay[1].getscale()
 endif
-if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[1] != none
-	ActorTwo = ActorsInPlay[1]
+if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[2] != none
+	ActorTwo = ActorsInPlay[2]
 	Actor2BaseScale = ActorTwo.getscale()
 endif
-if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[2] != none
-	ActorThree = ActorsInPlay[2]
+if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[3] != none
+	ActorThree = ActorsInPlay[3]
 	Actor3BaseScale = ActorThree.getscale()
 endif
-if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[3] != none
-	ActorFour = ActorsInPlay[3]
+if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[4] != none
+	ActorFour = ActorsInPlay[4]
 	Actor4BaseScale = ActorFour.getscale()
 endif
-if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[4] != none
-	ActorFive = ActorsInPlay[4]
+if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[5] != none
 	Actor5BaseScale = ActorFive.getscale()
+	ActorFive = ActorsInPlay[5]
 endif
 
 NotificationifFileisBad()
@@ -437,84 +437,52 @@ EndFunction
 int PCPosition
 
 Function FindActorsAndVoices()
+	
+	
 	Actor[] actorList = sexLabThreadController.Positions
-	int actorCount = actorList.Length
-	int actorIndex = 0
-
-	mainFemaleActor = none
-	mainMaleActor = none
-	mainFemaleVoice = none
-	mainMaleVoice = none
-	DefaultMaleVoice = none
-	PCPosition = -1
-
-	if actorCount == 0
-		Debug.Trace("FindActorsAndVoices: No actors found.")
-		return
-	endif
+	Int actorCount = actorList.Length
+	Int actorIndex = 0
 
 	mainFemaleVoice = MasterScript.GetVoiceForActress(playerCharacter)
-
-	while actorIndex < actorCount
+	
+	;Go through the list of all actors in the scene and get data on their gender and voices
+	;PC is always main female
+	While actorIndex < actorCount
+	
 		Actor actorInQuestion = actorList[actorIndex]
-
-		if actorInQuestion != none
-			; Track PC position
-			if actorInQuestion == playerCharacter
-				PCPosition = actorIndex
-				mainFemaleActor = actorInQuestion
-			endif
-
-			; Assign default male voice
-			if DefaultMaleVoice == none
-				DefaultMaleVoice = MasterScript.GetDefaultMaleVoice(actorInQuestion)
-			endif
-
-			; Assign main male if qualifies
-			if mainMaleActor == none && (MasterScript.IsMale(actorInQuestion) || hasSchlong(actorInQuestion)) && actorInQuestion != playerCharacter
-				mainMaleVoice = MasterScript.GetVoiceForActor(actorInQuestion)
-				if mainMaleVoice != none
-					mainMaleActor = actorInQuestion
-				endif
-			endif
-
-			; Fallback: assign main female if PC not present
-			if mainFemaleActor == none && !MasterScript.IsMale(actorInQuestion) && !hasSchlong(actorInQuestion)
-				mainFemaleActor = actorInQuestion
-				mainFemaleVoice = MasterScript.GetVoiceForActress(actorInQuestion)
-			endif
+		if actorInQuestion == playerCharacter
+			PCPosition = actorIndex
 		endif
+		
+		
+		if DefaultMaleVoice == none
+			DefaultMaleVoice = MasterScript.GetDefaultMaleVoice(actorInQuestion)
+		endif
+		If (MasterScript.IsMale(actorInQuestion) || hasSchlong(actorInQuestion)) && actorInQuestion != playerCharacter
+			;If mainMaleVoice == None
+				mainMaleVoice = MasterScript.GetVoiceForActor(actorInQuestion)
+				
+				If mainMaleVoice != None && mainMaleActor == None
+					mainMaleActor = actorInQuestion
+				EndIf
+			;EndIf
+			
+		EndIf
 
 		actorIndex += 1
-	endWhile
-
-	; Handle fallback if no main male assigned
-	if mainMaleActor == none
-		if actorCount >= 2
-			if mainFemaleActor == actorList[0]
-				mainMaleActor = actorList[1]
-			else
-				mainMaleActor = actorList[0]
-			endif
-			mainMaleVoice = MasterScript.GetVoiceForActor(mainMaleActor)
+	EndWhile
+			
+	if mainMaleActor == None
+		if mainFemaleActor == actorList[0]
+			mainMaleActor = actorList[1]
 		else
-			; Solo scene (masturbation)
-			mainMaleActor = none
-			mainMaleVoice = none
+			mainMaleActor = actorList[0]
 		endif
 	endif
-
-	; Logging
-	if mainFemaleActor != none
-		printdebug("mainFemaleActor: " + mainFemaleActor.GetLeveledActorBase().GetName())
-	endif
-	if mainMaleActor != none
-		printdebug("mainMaleActor: " + mainMaleActor.GetLeveledActorBase().GetName())
-	else
-		printdebug("mainMaleActor: NONE (solo or F/F scene)")
-	endif
+	
+	printdebug("mainfemaleactor :" + mainFemaleActor.getleveledactorbase().GetName())
+	printdebug("mainmaleactor :" + mainMaleActor.getleveledactorbase().GetName())
 EndFunction
-
 
 Function RegisterForTheEventsWeNeed()
 	;For clean up after sex is done (important)
@@ -536,16 +504,26 @@ Event IVDTSceneEnd(string eventName, string argString, float argNum, form sender
 		Return
 	EndIf
 ;	miscutil.PrintConsole ("Triggered IVDTSceneEnd ")
-	ASLEndScene()
+	RestoreArmor()
+	ResetActorScale()
+	ResetGhostActor()
+	
+	MasterScript.RegisterThatSceneIsEnding(maleOnlyScene)
+	RemoveTracker()
+	
+
+	
 EndEvent
 
 Function ASLEndScene()	;manually end scene
-	printdebug("HentaiRim IVDT: ASLEndScene" )
+	;miscutil.PrintConsole ("Triggered ASLEndScene ")
 	RestoreArmor()
 	ResetActorScale()
 	ResetGhostActor()
 	MasterScript.RegisterThatSceneIsEnding(maleOnlyScene)
 	RemoveTracker()
+	
+	
 endfunction
 
 Event IVDTOnOrgasm(Form actorRef, Int thread)
@@ -2381,7 +2359,7 @@ Bool Function MainFemaleisBurstingAtSeams()
 if has_spell(mainFemaleActor, 0x387D, "sr_fillherup.esp") 	
 	return true
 endif
-return false
+
 endfunction
 
 Bool function femaleCloseToOrgasm()
