@@ -167,10 +167,10 @@ int EnableDDGagVoice ;done
 Int EnableMaleVoice ;done
 float ChanceForMaleToComment ; done
 
-String[] ArmorSlotsToSwitch
+String[] ArmorSlotsToSwitch;moved to sslActorAlias
 Int[] ValidSlots
-form[] BaseArmorArr 
-form[] LewdArmorArr 
+form[] BaseArmorArr ;moved to sslActorAlias
+form[] LewdArmorArr ;moved to sslActorAlias
 Bool ArmorSwapped = false
 
 Keyword TNG_Gentlewoman
@@ -235,9 +235,6 @@ EndEvent
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
 	printdebug("OnEffectFinish: " + akTarget.GetLeveledActorBase().GetName())
-	if akTarget == playerCharacter
-		RestoreArmor()
-	endif
 	ASLEndScene()
 EndEvent
 
@@ -252,23 +249,28 @@ ActorsInPlay = sexLabThreadController.Positions
 
 if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[1] != none
 	ActorOne = ActorsInPlay[1]
+	PrintDebug("ActorOne:" + ActorsInPlay[1].GetLeveledActorBase().getName())
 	Actor1BaseScale = ActorsInPlay[1].getscale()
 endif
 if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[2] != none
 	ActorTwo = ActorsInPlay[2]
+	PrintDebug("ActorTwo:" + ActorsInPlay[2].GetLeveledActorBase().getName())
 	Actor2BaseScale = ActorTwo.getscale()
 endif
 if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[3] != none
 	ActorThree = ActorsInPlay[3]
+	PrintDebug("ActorThree:" + ActorsInPlay[3].GetLeveledActorBase().getName())
 	Actor3BaseScale = ActorThree.getscale()
 endif
 if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[4] != none
 	ActorFour = ActorsInPlay[4]
+	PrintDebug("ActorFour:" + ActorsInPlay[4].GetLeveledActorBase().getName())
 	Actor4BaseScale = ActorFour.getscale()
 endif
 if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[5] != none
-	Actor5BaseScale = ActorFive.getscale()
 	ActorFive = ActorsInPlay[5]
+	PrintDebug("ActorFive:" + ActorsInPlay[5].GetLeveledActorBase().getName())
+	Actor5BaseScale = ActorFive.getscale()
 endif
 
 NotificationifFileisBad()
@@ -511,27 +513,20 @@ Event IVDTSceneEnd(string eventName, string argString, float argNum, form sender
 		Return
 	EndIf
 ;	miscutil.PrintConsole ("Triggered IVDTSceneEnd ")
-	RestoreArmor()
 	ResetActorScale()
 	ResetGhostActor()
 	
 	MasterScript.RegisterThatSceneIsEnding(maleOnlyScene)
 	RemoveTracker()
-	
-
-	
 EndEvent
 
 Function ASLEndScene()	;manually end scene
 	;miscutil.PrintConsole ("Triggered ASLEndScene ")
 	printdebug("ASLEndScene: " + mainFemaleActor.GetLeveledActorBase().getName())
-	RestoreArmor()
 	ResetActorScale()
 	ResetGhostActor()
 	MasterScript.RegisterThatSceneIsEnding(maleOnlyScene)
 	RemoveTracker()
-	
-	
 endfunction
 
 Event IVDTOnOrgasm(Form actorRef, Int thread)
@@ -691,7 +686,6 @@ endif
 if actorWithSceneTrackerSpell == mainFemaleActor
 
 	if ShouldInitialize == true && currentstage == 1
-
 		PerformInitialization()
 	endif
 	;update enjoyment
@@ -2007,11 +2001,6 @@ if IsgettingPenetrated()
 endif	
 	
 	Utility.Wait(Utility.RandomFloat(0.5, 1.0)) ; wait up to 1 second for transition to complete before playing voice
-	
-	if SexLab.FindPlayerController() != -1
-		BodySwitchtoLewdArmor()
-		;unequipmask for blowjob
-	endif
 		
 	
 	if mainFemaleEnjoyment >= FemaleOrgasmHypeEnjoyment || moanonly == 1
@@ -2439,89 +2428,12 @@ endfunction
 
 
 Function BodySwitchtoLewdArmor()
-; this is meant for slot 32 body armor switching only at the beginning of the stage.
-if EnableArmorSwapping != 1 || ArmorSwapped
-        return
-endif
-ArmorSwapped = true
-
-int slotlength = ArmorSlotsToSwitch.length
-int slotindex = 0
-Armor BaseArmor
-Armor LewdArmor
-
-	;miscutil.PrintConsole ("wearing lewd armor...")
-	while slotindex < slotlength
-		BaseArmor = mainFemaleActor.GetWornForm(Armor.GetMaskForSlot(ArmorSlotsToSwitch[slotindex] as int)) as armor
-		;miscutil.PrintConsole ("BaseArmor : " + BaseArmor.getname())
-		if BaseArmor
-			LewdArmor = jsonutil.GetFormValue(ArmorSwappingFile, BaseArmor.getname(), none)	as armor
-		endif
-	;	miscutil.PrintConsole ("LewdArmor : " + LewdArmor.getname())
-		if LewdArmor != none && BaseArmor!=none
-	;	miscutil.PrintConsole (slotindex + " Trying to add  : "+ LewdArmor.getname())
-			mainFemaleActor.addItem(LewdArmor , abSilent=true)
-		
-		;miscutil.PrintConsole (slotindex + " Trying to unequip  : "+ BaseArmor.getname())
-			mainFemaleActor.unEquipItem(BaseArmor , abSilent=true)
-		
-	;	miscutil.PrintConsole (slotindex + " Trying to equip  : "+ LewdArmor.getname())
-			mainFemaleActor.EquipItem(LewdArmor , abSilent=true)
-		
-			BaseArmorArr = papyrusutil.pushform(BaseArmorArr , BaseArmor)
-			LewdArmorArr = papyrusutil.pushform(LewdArmorArr , LewdArmor)
-		endif
-	
-	slotindex += 1
-	endwhile
-	if BaseArmorArr && BaseArmorArr.Length > 0
-		printdebug("SwitchtoLewdArmoreArmor-swapped: " + BaseArmorArr.Length + ".Character:" +mainFemaleActor.GetLeveledActorBase().GetName())
-	else
-		printdebug("SwitchtoLewdArmoreArmor-swapped 0" + ".Character:" +mainFemaleActor.GetLeveledActorBase().GetName())
-	endif
-	
+;moved to sllActorAlias
 endfunction
 
 
 Function RestoreArmor()
-    if EnableArmorSwapping != 1 || !ArmorSwapped
-      return
-    endif
-	
-	int slotLength = BaseArmorArr.Length
-	
-	if BaseArmorArr
-		printdebug("RestoreArmor-BaseArmorArr: " + BaseArmorArr.Length + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())
-	endif
-	if LewdArmorArr
-		printdebug("RestoreArmor-LewdArmorArr: " + LewdArmorArr.Length + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())
-	endif
-
-	;printdebug("RestoreArmor-amount: " + slotLength + ".Character" + mainFemaleActor.GetLeveledActorBase().GetName())	
-	int slotIndex = 0
-	Armor baseArmor
-	Armor lewdArmor
-
-	while slotIndex < slotLength
-		baseArmor = BaseArmorArr[slotIndex] as Armor
-		lewdArmor = LewdArmorArr[slotIndex] as Armor
-		
-		if baseArmor
-			mainFemaleActor.EquipItem(baseArmor, abSilent=true)
-			; MiscUtil.PrintConsole("Equipped BaseArmor: " + baseArmor.GetName())
-		endif
-
-		if lewdArmor
-			mainFemaleActor.RemoveItem(lewdArmor, abSilent=true)
-			; MiscUtil.PrintConsole("Removed LewdArmor: " + lewdArmor.GetName())
-		endif
-
-		
-
-	
-		slotIndex += 1
-	endwhile
-	ArmorSwapped = false
+    ;moved to sllActorAlias
 EndFunction
 
 
