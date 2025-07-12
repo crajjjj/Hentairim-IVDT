@@ -213,7 +213,7 @@ Form ArmortoSwitch
 
 Faction HentairimResistance
 Faction HentairimBroken
-
+Faction sr_InflateOralFaction
 	
 int gender = 0	
 Bool NotifiedBrokenstatus = false
@@ -588,7 +588,9 @@ Event IVDTOnOrgasm(Form actorRef, Int thread)
 				
 				ElseIf IsSuckingoffOther() 	&& SexLabThreadController.TotalTime - timeOfLastStageStart > 2
 					Utility.Wait(Utility.RandomFloat(0.5, 1.5))
-
+					
+					ASLAddOralCumleak()
+					
 					PlaySound(mainFemaleVoice.MaleOrgasmOral, mainFemaleActor, requiredChemistry = 0, soundPriority = 3 , debugtext= "MaleOrgasmOral")	
 				
 				elseif ishugepp() && SexLabThreadController.TotalTime - timeOfLastStageStart > 2 && moanonly != 1
@@ -843,6 +845,7 @@ Function RemoveTracker()
 	ASLRemoveOrgasmSSquirt()
 	ASLRemoveThickCumleak()
 	ASLRemoveCumPool()
+	ASLRemoveOralCumleak()
 	;Perform needed clean up first
 	;UnregisterForUpdate()
 	LowPrioritySounds.UnMute()
@@ -2172,22 +2175,87 @@ endif
 endfunction
 
 Function ASLAddThickCumleak()
-if EnableThickCumLeak != 1 
-	Return
-endif
+	if EnableThickCumLeak != 1 
+		Return
+	endif
 
-	if	!mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor) && Game.GetModbyName("sr_fillherup.esp") != 255 
+	if	isDependencyReady("sr_fillherup.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor) 
 		mainFemaleActor.addItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor , abSilent=true)
 		mainFemaleActor.EquipItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor)
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.addItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.addItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
 	endif
 
 endfunction
 
 Function ASLRemoveThickCumleak()
 
-	if	mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor) 
+	if	isDependencyReady("sr_fillherup.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor) 
 		mainFemaleActor.unEquipItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor , abSilent=true)
 		mainFemaleActor.removeItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor)
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.unEquipItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.removeItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.unEquipItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.removeItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+endfunction
+
+Function ASLAddOralCumleak()
+	if EnableThickCumLeak != 1 
+		Return
+	endif
+	
+	bool oralLeak = false
+
+	if	isDependencyReady("sr_fillherup.esp")
+		If (!sr_InflateOralFaction)
+			sr_InflateOralFaction = Game.GetFormFromFile(0x14204B, "sr_fillherup.esp") as Faction
+		EndIf
+		if sr_InflateOralFaction && mainFemaleActor.GetFactionRank(sr_InflateOralFaction) > 80
+			oralLeak = true
+		endif
+	endif
+
+	if	oralLeak && isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.addItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+	if	oralLeak && isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.addItem(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+endfunction
+
+Function ASLRemoveOralCumleak()
+	if EnableThickCumLeak != 1 
+		Return
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.unEquipItem(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.removeItem(Game.GetFormFromFile(0x008089, "[Predator] Liquid Pack v2.esp") as Armor)
+	endif
+
+	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.unEquipItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
+		mainFemaleActor.removeItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
 	endif
 
 endfunction
@@ -2196,16 +2264,15 @@ Function ASLAddCumPool()
 if EnableThickCumLeak != 1 
 	Return
 endif
-
-if	!mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor) && Game.GetModbyName("sr_fillherup.esp") != 255 
+if	isDependencyReady("sr_fillherup.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor)
 	mainFemaleActor.addItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor , abSilent=true)
 	mainFemaleActor.EquipItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor)
 endif
-
 endfunction
 
 Function ASLRemoveCumPool()
-if	mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor) 
+
+if	isDependencyReady("sr_fillherup.esp") && mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor) 
 	mainFemaleActor.unEquipItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor , abSilent=true)
 	mainFemaleActor.removeItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor)
 endif
