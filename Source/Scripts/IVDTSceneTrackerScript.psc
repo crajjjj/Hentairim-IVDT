@@ -214,6 +214,7 @@ Form ArmortoSwitch
 Faction HentairimResistance
 Faction HentairimBroken
 Faction sr_InflateOralFaction
+Faction sr_InflateFaction
 	
 int gender = 0	
 Bool NotifiedBrokenstatus = false
@@ -235,7 +236,7 @@ EndEvent
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
 	printdebug("OnEffectFinish: " + akTarget.GetLeveledActorBase().GetName())
-	ASLEndScene()
+	;ASLEndScene()
 EndEvent
 
 int EnablePrintDebug
@@ -570,14 +571,14 @@ Event IVDTOnOrgasm(Form actorRef, Int thread)
 
 				if MainFemaleisBurstingAtSeams() && CurrentPenetrationLvl() > 1
 				
-					float AdditionalHugePPChanceLeak = 1
+					    float AdditionalHugePPChanceLeak = 1
 					
 						if ishugePP()
 							AdditionalHugePPChanceLeak = 2
 						endif	
 
 						PlaySound(mainFemaleVoice.SurprisedByMaleOrgasm, mainFemaleActor, requiredChemistry = 0 , soundPriority = 3 , debugtext ="SurprisedByMaleOrgasm")
-
+						printdebug("non PC ORGASM!" )
 						;miscutil.PrintConsole (" leaking pussy")
 						ASLAddThickCumleak()
 						ASLAddCumPool()
@@ -1739,7 +1740,6 @@ printdebug("PLay Ending")
 ;chance to leak cum 
 if  Utility.RandomFloat(0.0, 1.0) < ChanceToLeakThickCum && CameInsideCount > 0
 	ASLAddThickCumleak()
-
 endif
 
 StorageUtil.SetIntValue(None, "ASLDoNotAllowFemaleOrgasmYet" , 0)
@@ -2420,11 +2420,18 @@ endfunction
 
 
 Bool Function MainFemaleisBurstingAtSeams()
-
-if has_spell(mainFemaleActor, 0x387D, "sr_fillherup.esp") 	
-	return true
-endif
-
+	if	!isDependencyReady("sr_fillherup.esp")
+		return false
+	endif
+	if has_spell(mainFemaleActor, 0x00387D, "sr_fillherup.esp") || has_MagicEffect(mainFemaleActor, 0x00387C, "sr_fillherup.esp")
+		return true
+	endif
+	If (!sr_InflateFaction)
+		sr_InflateFaction = Game.GetFormFromFile(0x00A991, "sr_fillherup.esp") as Faction
+	EndIf
+	if sr_InflateFaction && mainFemaleActor.GetFactionRank(sr_InflateFaction) > 90
+		return true
+	endif
 endfunction
 
 Bool function femaleCloseToOrgasm()
