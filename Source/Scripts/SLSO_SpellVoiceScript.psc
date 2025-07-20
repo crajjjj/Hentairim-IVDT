@@ -28,7 +28,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 		RegisterForModEvent("SLSO_Start_widget", "Start_widget")
 		RegisterForModEvent("AnimationEnd", "OnSexLabEnd")
 	else
-		Remove()
+		Remove(akTarget)
 	endif
 EndEvent
 
@@ -56,7 +56,7 @@ EndEvent
 
 Event OnSexLabEnd(string EventName, string argString, Float argNum, form sender)
 	if controller == SexLab.GetController(argString as int)
-		Remove()
+		Remove(None)
 	endif
 EndEvent
 
@@ -87,21 +87,20 @@ Event OnUpdate()
 				endif
 		endif
 	endif
-	Remove()
+	Remove(None)
 EndEvent
 
 Event OnPlayerLoadGame()
-	Remove()
+	Remove(None)
 EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
 	;just in case
-	Remove()
+	Remove(akTarget)
 EndEvent
 
-function Remove()
-
-	If GetTargetActor() != none
+function Remove(Actor akTarget)
+	If akTarget || GetTargetActor() != none
 		UnRegisterForUpdate()
 		UnregisterForAllModEvents()
 		UnregisterForAllKeys()

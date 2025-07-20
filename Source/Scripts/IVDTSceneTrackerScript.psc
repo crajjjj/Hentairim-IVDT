@@ -513,12 +513,7 @@ Event IVDTSceneEnd(string eventName, string argString, float argNum, form sender
 	If argString as Int != sceneID ;If true, this isn't our scene that just ended but another scene. So, ignore it.
 		Return
 	EndIf
-;	miscutil.PrintConsole ("Triggered IVDTSceneEnd ")
-	ResetActorScale()
-	ResetGhostActor()
-	
-	MasterScript.RegisterThatSceneIsEnding(maleOnlyScene)
-	RemoveTracker()
+	ASLEndScene()
 EndEvent
 
 Function ASLEndScene()	;manually end scene
@@ -1014,6 +1009,7 @@ Bool Function PossiblyAskForCumInSpecificLocation()
 		PlaySound(mainFemaleVoice.AskForOralCum, mainFemaleActor, requiredChemistry = 2 , debugtext = "AskForOralCum")	
 	endif
 
+	return false
 
 EndFunction
 
@@ -2160,7 +2156,7 @@ if Utility.RandomFloat(0.0, 1.0) < ChanceToOrgasmSquirt
 
 if	!mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xD7B19, "sr_fillherup.esp") as Armor) && Game.GetModbyName("sr_fillherup.esp") != 255 
 	mainFemaleActor.addItem(Game.GetFormFromFile(0xD7B19, "sr_fillherup.esp") as Armor , abSilent=true)
-	mainFemaleActor.EquipItem(Game.GetFormFromFile(0xD7B19, "sr_fillherup.esp") as Armor)
+	mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0xD7B19, "sr_fillherup.esp") as Armor, equipsound=false)
 endif
 
 endif
@@ -2181,17 +2177,17 @@ Function ASLAddThickCumleak()
 
 	if	isDependencyReady("sr_fillherup.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor) 
 		mainFemaleActor.addItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor , abSilent=true)
-		mainFemaleActor.EquipItem(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor)
+		mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0xE1D1C, "sr_fillherup.esp") as Armor, equipsound=false)
 	endif
 
 	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
 		mainFemaleActor.addItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
-		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0x00803, "[Predator] Liquid Pack v2.esp") as Armor, equipsound=false)
 	endif
 
 	if	isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
 		mainFemaleActor.addItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
-		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0x00808, "[Predator] Liquid Pack v2.esp") as Armor, equipsound=false)
 	endif
 
 endfunction
@@ -2233,12 +2229,12 @@ Function ASLAddOralCumleak()
 
 	if	oralLeak && isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
 		mainFemaleActor.addItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
-		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0x00804, "[Predator] Liquid Pack v2.esp") as Armor, equipsound=false)
 	endif
 
 	if	oralLeak && isDependencyReady("[Predator] Liquid Pack v2.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor)
 		mainFemaleActor.addItem(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor , abSilent=true)
-		mainFemaleActor.EquipItem(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor)
+		mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0x00809, "[Predator] Liquid Pack v2.esp") as Armor, equipsound=false)
 	endif
 
 endfunction
@@ -2266,7 +2262,7 @@ if EnableThickCumLeak != 1
 endif
 if	isDependencyReady("sr_fillherup.esp") && !mainFemaleActor.IsEquipped(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor)
 	mainFemaleActor.addItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor , abSilent=true)
-	mainFemaleActor.EquipItem(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor)
+	mainFemaleActor.EquipItemEx(Game.GetFormFromFile(0x633D5, "sr_fillherup.esp") as Armor, equipsound = false)
 endif
 endfunction
 
@@ -2429,7 +2425,7 @@ Bool Function MainFemaleisBurstingAtSeams()
 	If (!sr_InflateFaction)
 		sr_InflateFaction = Game.GetFormFromFile(0x00A991, "sr_fillherup.esp") as Faction
 	EndIf
-	if sr_InflateFaction && mainFemaleActor.GetFactionRank(sr_InflateFaction) > 90
+	if sr_InflateFaction && mainFemaleActor.GetFactionRank(sr_InflateFaction) > 99
 		return true
 	endif
 endfunction
@@ -2587,8 +2583,8 @@ if (AlwaysLactate == 1 || PCHasLactatingSpell() ) && EnableLactate == 1 || Stora
 	if  Game.GetModbyName("IVDTHentaiLactate.esp") != 255 && !mainFemaleActor.IsEquipped(MilkL) && !mainFemaleActor.IsEquipped(MilkR) && MilkL != None && MilkR != None
 		mainFemaleActor.AddItem(MilkR , abSilent=true)
 		mainFemaleActor.AddItem(MilkL , abSilent=true)
-		mainFemaleActor.EquipItem(MilkR , abSilent=true)
-		mainFemaleActor.EquipItem(MilkL , abSilent=true)
+		mainFemaleActor.EquipItemEx(MilkR , equipsound = false)
+		mainFemaleActor.EquipItemEx(MilkL , equipsound = false)
 		NippleLeakCBBE.play(MainfemaleActor, Utility.Randomint(15,30))
 	endif
 endif
