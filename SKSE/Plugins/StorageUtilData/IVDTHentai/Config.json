@@ -35,6 +35,11 @@
       "useblowjobsoundforkissing":1,
       "speeduppreventstageadvance":1,
       "speedgeartoincreaseintensity":2,
-      "printdebug":0
+      "lowprioritysoundsvolume":1.0,
+      "highprioritysoundsvolume":1.0,
+      "lowprioritysoundsmalevolume":1.0,
+      "highprioritysoundsmalevolume":1.0,
+      "sfxsoundsvolume":1.0,
+      "printdebug":1
    }
 }

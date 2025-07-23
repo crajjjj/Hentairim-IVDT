@@ -19,12 +19,16 @@ sslBaseAnimation anim
 actor player
 Actor[] actorList
 string ASLSFX
+float sfxVolume
+String ConfigFile
 
 Event OnEffectStart( Actor akTarget, Actor akCaster )
 	IsPlayer = akTarget == Game.GetPlayer()
 	File = "/SLSO/Config.json"
+	ConfigFile  = "IVDTHentai/Config.json"
 	if IsPlayer ;((JsonUtil.GetIntValue(File, "sl_voice_player") != 0 && IsPlayer) || (JsonUtil.GetIntValue(File, "sl_voice_npc") != 0 && !IsPlayer))
 		SexLab = Quest.GetQuest("SexLabQuestFramework") as SexLabFramework
+		sfxVolume = JsonUtil.GetFloatValue(ConfigFile,"sfxsoundsvolume", 1.0) 
 		RegisterForModEvent("SLSO_Start_widget", "Start_widget")
 		RegisterForModEvent("AnimationEnd", "OnSexLabEnd")
 	else
@@ -76,9 +80,11 @@ Event OnUpdate()
 						ASLRefreshSoundPosition()
 						printdebug("ASLSoundPosition " + ASLSoundPosition)
 						mySFX = (SoundContainer.GetAt(0) As formlist).GetAt(ASLSoundPosition) As Sound
-
-						mySFX.Playandwait(player)
-						Utility.Wait(1)
+						int aiPlaybackInstance = mySFX.play(player)
+						if aiPlaybackInstance
+							Sound.SetInstanceVolume(aiPlaybackInstance, sfxVolume)
+						endif
+						Utility.Wait(5)
 					endif
 					RegisterForSingleUpdate(1)
 					return

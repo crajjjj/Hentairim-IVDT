@@ -108,7 +108,10 @@ int CameInsideCount = 0
 Bool ReacttoFemaleOrgasmNext = false
 Bool ReacttoMaleOrgasmNext = false
 Float Volume
-
+Float LowPrioritySoundsVolume
+Float HighPrioritySoundsVolume
+Float LowPrioritySoundsMaleVolume
+Float HighPrioritySoundsMaleVolume
 
 Actor ActorOne = none
 Actor ActorTwo = none
@@ -244,36 +247,6 @@ int useblowjobsoundforkissing
 int speeduppreventstageadvance
 int speedgeartoincreaseintensity
 Function InitializeConfigValues()
-
-;Store Actor Base Scaling for reset later after animation ends,
-ActorsInPlay = sexLabThreadController.Positions
-
-if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[1] != none
-	ActorOne = ActorsInPlay[1]
-	PrintDebug("ActorOne:" + ActorsInPlay[1].GetLeveledActorBase().getName())
-	Actor1BaseScale = ActorsInPlay[1].getscale()
-endif
-if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[2] != none
-	ActorTwo = ActorsInPlay[2]
-	PrintDebug("ActorTwo:" + ActorsInPlay[2].GetLeveledActorBase().getName())
-	Actor2BaseScale = ActorTwo.getscale()
-endif
-if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[3] != none
-	ActorThree = ActorsInPlay[3]
-	PrintDebug("ActorThree:" + ActorsInPlay[3].GetLeveledActorBase().getName())
-	Actor3BaseScale = ActorThree.getscale()
-endif
-if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[4] != none
-	ActorFour = ActorsInPlay[4]
-	PrintDebug("ActorFour:" + ActorsInPlay[4].GetLeveledActorBase().getName())
-	Actor4BaseScale = ActorFour.getscale()
-endif
-if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[5] != none
-	ActorFive = ActorsInPlay[5]
-	PrintDebug("ActorFive:" + ActorsInPlay[5].GetLeveledActorBase().getName())
-	Actor5BaseScale = ActorFive.getscale()
-endif
-
 NotificationifFileisBad()
 
 ;MinOrgasmsToBroken = JsonUtil.GetIntValue(ConfigFile, "minorgasmstobroken"  , 9999)
@@ -309,7 +282,14 @@ ChanceToCommentWhenMaleCloseToOrgasm = JsonUtil.GetIntValue(ConfigFile,"chanceto
 FemaleOrgasmHypeEnjoyment = JsonUtil.GetIntValue(ConfigFile,"femaleorgasmhypeenjoyment",0) 
 MaleOrgasmHypeEnjoyment = JsonUtil.GetIntValue(ConfigFile,"maleorgasmhypeenjoyment",0) 
 EnableDDGagVoice = JsonUtil.GetIntValue(DDGagFile,"enableddgagvoice",0) 
-EnableMaleVoice = JsonUtil.GetIntValue(ConfigFile,"enablemalevoice",0)  
+EnableMaleVoice = JsonUtil.GetIntValue(ConfigFile,"enablemalevoice",0)
+
+LowPrioritySoundsVolume = JsonUtil.GetFloatValue(ConfigFile,"lowprioritysoundsvolume", Volume) 
+HighPrioritySoundsVolume = JsonUtil.GetFloatValue(ConfigFile,"highprioritysoundsvolume", Volume)  
+LowPrioritySoundsMaleVolume = JsonUtil.GetFloatValue(ConfigFile,"lowprioritysoundsmalevolume", 1.0) 
+HighPrioritySoundsMaleVolume = JsonUtil.GetFloatValue(ConfigFile,"highprioritysoundsmalevolume", 1.0)  
+
+
 ChanceForMaleToComment = JsonUtil.GetIntValue(ConfigFile,"chanceformaletocomment",0) as float /100  
 ArmorSlotsToSwitch = papyrusutil.stringsplit(JsonUtil.GetStringValue(ArmorSwappingFile,"armorslots","") ,",")
 
@@ -332,6 +312,36 @@ useblowjobsoundforkissing = JsonUtil.GetIntValue(ConfigFile,"useblowjobsoundfork
 speeduppreventstageadvance = JsonUtil.GetIntValue(ConfigFile,"speeduppreventstageadvance",0)
 speedgeartoincreaseintensity = JsonUtil.GetIntValue(ConfigFile,"speedgeartoincreaseintensity",0)
 EnablePrintDebug =  JsonUtil.GetIntValue(ConfigFile,"printdebug",1)  
+
+;Store Actor Base Scaling for reset later after animation ends,
+ActorsInPlay = sexLabThreadController.Positions
+
+if ActorsInPlay && ActorsInPlay.Length > 0 && ActorsInPlay[0] != none
+	ActorOne = ActorsInPlay[0]
+	PrintDebug("ActorOne:" + ActorsInPlay[0].GetLeveledActorBase().getName())
+	Actor1BaseScale = ActorsInPlay[0].getscale()
+endif
+if ActorsInPlay && ActorsInPlay.Length > 1 && ActorsInPlay[1] != none
+	ActorTwo = ActorsInPlay[1]
+	PrintDebug("ActorTwo:" + ActorsInPlay[1].GetLeveledActorBase().getName())
+	Actor2BaseScale = ActorTwo.getscale()
+endif
+if ActorsInPlay && ActorsInPlay.Length > 2 && ActorsInPlay[2] != none
+	ActorThree = ActorsInPlay[2]
+	PrintDebug("ActorThree:" + ActorsInPlay[2].GetLeveledActorBase().getName())
+	Actor3BaseScale = ActorThree.getscale()
+endif
+if ActorsInPlay && ActorsInPlay.Length > 3 && ActorsInPlay[3] != none
+	ActorFour = ActorsInPlay[3]
+	PrintDebug("ActorFour:" + ActorsInPlay[3].GetLeveledActorBase().getName())
+	Actor4BaseScale = ActorFour.getscale()
+endif
+if ActorsInPlay && ActorsInPlay.Length > 4 && ActorsInPlay[4] != none
+	ActorFive = ActorsInPlay[4]
+	PrintDebug("ActorFive:" + ActorsInPlay[4].GetLeveledActorBase().getName())
+	Actor5BaseScale = ActorFive.getscale()
+endif
+
 InitializeTimerConfig() 
  
 endfunction
@@ -353,19 +363,19 @@ Function PerformInitialization()
 	
 	;Fourth, pull the MCM settings we need to cache
 	PullMCMConfigOptions()
-
+	InitializeConfigValues()
 	;always run male at full volume
 	if LowPrioritySoundsMale
-		LowPrioritySoundsMale.setvolume(1.0)
+		LowPrioritySoundsMale.setvolume(LowPrioritySoundsMaleVolume)
 	endif
 	if HighPrioritySoundsMale
-		HighPrioritySoundsMale.setvolume(1.0)
+		HighPrioritySoundsMale.setvolume(HighPrioritySoundsMaleVolume)
 	endif
 	if LowPrioritySounds
-		LowPrioritySounds.setvolume(volume)
+		LowPrioritySounds.setvolume(LowPrioritySoundsVolume)
 	endif
 	if HighPrioritySounds
-		HighPrioritySounds.setvolume(volume)
+		HighPrioritySounds.setvolume(HighPrioritySoundsVolume)
 	endif
 	
 	;Then, set up some other one-time config on scene start
@@ -376,7 +386,7 @@ Function PerformInitialization()
 
 	;After set up, greet our partner if applicable
 
-	InitializeConfigValues()
+	
 	
 	 ;Make sure everything is up to date before we make our greeting
 
